@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework - Basic JavaScript</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-dark text-white">
+    <div class="container mt-5">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link active" data-toggle="tab" href="#registrasi">Registrasi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-toggle="tab" href="#list-pendaftar">List Pendaftar</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="registrasi" class="tab-pane fade show active">
+                <h2 class="mt-3">Form Registrasi</h2>
+                <form id="regist">
+                    <div class="form-group">
+                        <label for="nama">Nama (Minimal 10 karakter):</label>
+                        <input type="text" id="nama" class="form-control" required minlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="umur">Umur (Minimal 25 tahun):</label>
+                        <input type="number" id="umur" class="form-control" required min="25">
+                    </div>
+                    <div class="form-group">
+                        <label for="uangSangu">Uang Sangu (Minimal 100 ribu dan maksimal 1 juta):</label>
+                        <input type="number" id="uangSangu" class="form-control" required min="100000" max="1000000">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div id="list-pendaftar" class="tab-pane fade">
+                <h2 class="mt-3">List Pendaftar</h2>
+                <table id="tabeldaftar" class="table table-bordered table-dark">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Umur</th>
+                            <th>Uang Sangu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataPendaftar">
+                        <!-- Data pendaftar akan ditampilkan di sini -->
+                    </tbody>
+                </table>
+                <p id="resume"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+             // JavaScript untuk validasi form dan menampilkan data pendaftar
+             class Pendaftar {
+                constructor(nama, umur, uangSangu) {
+                    this.nama = nama;
+                    this.umur = umur;
+                    this.uangSangu = uangSangu;
+                }
+            }
+    
+            const Listpendaftar = [];
+            const form = document.getElementById('regist');
+            const tabeldaftar = document.getElementById('tabeldaftar');
+            const dataPendaftar = document.getElementById('dataPendaftar');
+            const resume = document.getElementById('resume');
+    
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nama = document.getElementById('nama').value;
+                const umur = parseInt(document.getElementById('umur').value);
+                const uangSangu = parseInt(document.getElementById('uangSangu').value);
+    
+                if (nama.length < 10 || umur < 25 || uangSangu < 100000 || uangSangu > 1000000) {
+                    alert('Data tidak memenuhi kriteria.');
+                    return;
+                }
+    
+                const pendaftar = new Pendaftar(nama, umur, uangSangu);
+                Listpendaftar.push(pendaftar);
+                updateTable();
+                form.reset();
+            });
+    
+            function updateTable() {
+                // Membersihkan semua baris dalam tabel sebelum menambahkan data baru
+                while (tabeldaftar.rows.length > 1) {
+                    tabeldaftar.deleteRow(1);
+                }
+            
+                Listpendaftar.forEach((pendaftar) => {
+                    const row = tabeldaftar.insertRow();
+                    const cellNama = row.insertCell(0);
+                    const cellUmur = row.insertCell(1);
+                    const cellUangSangu = row.insertCell(2);
+            
+                    cellNama.innerHTML = pendaftar.nama;
+                    cellUmur.innerHTML = pendaftar.umur;
+                    cellUangSangu.innerHTML = pendaftar.uangSangu;
+                });
+            
+                const totalUangSangu = Listpendaftar.reduce((sum, pendaftar) => sum + pendaftar.uangSangu, 0);
+                const rataRataUangSangu = totalUangSangu / Listpendaftar.length;
+                const totalUmur = Listpendaftar.reduce((sum, pendaftar) => sum + pendaftar.umur, 0);
+                const rataRataUmur = totalUmur / Listpendaftar.length;
+            
+                resume.innerHTML = `Rata-rata pendaftar memiliki uang sangu sebesar ${rataRataUangSangu} dengan rata-rata umur ${rataRataUmur}`;
+            }
+            
+    </script>
+</body>
+</html>
